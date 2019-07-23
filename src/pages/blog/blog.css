@@ -1,0 +1,34 @@
+.card-header{
+    padding-bottom: 0 !important;
+}
+.blog-information1{
+    color: grey;
+    padding-top: 0.2rem;
+    padding-right: 0;
+}
+.blog-information2{
+    color: grey;
+    padding-top: 0.2rem;
+    padding-left: 0;
+}
+.blog-information-icon{
+    font-size: 0.9rem;
+}
+.blog-information-item{
+    font-size: 0.6rem;
+    margin-right: 0.6rem;
+}
+.blog-a-title{
+    color: black;
+}
+.blog-a-text{
+    color: #444;
+    font-size: .875rem;
+}
+.card-body{
+    padding-top: 0.6rem !important;
+    padding-bottom: 0.6rem !important;
+}
+.card-text{
+    margin-bottom: 0;
+}

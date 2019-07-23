@@ -1,0 +1,55 @@
+#home-container{
+    width: 100%;
+    height: 100%;
+}
+#home-background{
+    background-image: url("../../static/images/bg.jpeg");
+    background-size: cover;
+    background-position: center center;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    filter: blur(5px);
+    z-index: -2;
+}
+#div-title{
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    top: 20%;
+}
+.home-h1{
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+#div-links{
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: 25%;
+}
+#ul-option{
+    display: flex;
+    padding: 0;
+    margin: 0;
+}
+.li-option{
+    flex: 1;
+    list-style-type: none;
+}
+.a-option{
+    padding-bottom: 5px;
+    color: #fff;
+	border-bottom: 1px solid #fff;
+}
+#div-icp{
+    position: fixed;
+    width: 100%;
+    bottom: 5px;
+    text-align: center;
+}
+#a-icp{
+    font-size: small;
+    color: grey;
+}

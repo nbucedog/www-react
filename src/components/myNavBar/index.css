@@ -1,0 +1,11 @@
+#basic-navbar-nav > .mr-auto{
+        text-align: center;
+}
+
+.myNavBar-input{
+    margin: 0.2rem;
+}
+#myNavBar-login-mo{
+    text-align: center;
+    color: grey;
+}
