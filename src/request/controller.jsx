@@ -1,4 +1,5 @@
 import wwwRequest from './base'
+import qs from 'qs';
 
 export default class Controller {
     constructor(resourcePath){
@@ -13,17 +14,17 @@ export default class Controller {
         return wwwRequest.get(this.resourcePath,{params});
     }
 
-    post(formData){
-        return wwwRequest.post(this.resourcePath,formData);
+    post(json){
+        return wwwRequest.post(this.resourcePath,json);
     }
 
     postConf(formData,config){
         return wwwRequest.post(this.resourcePath,formData,config)
     }
 
-    postJson(json){
-        return wwwRequest.post(this.resourcePath,json,{
-            headers:{'Content-Type':'application/json'}
+    postForm(data){
+        return wwwRequest.post(this.resourcePath,qs.stringify(data),{
+            headers:{'Content-Type':'application/x-www-form-urlencoded'}
         });
     }
 

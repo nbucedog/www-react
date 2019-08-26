@@ -8,24 +8,21 @@ import FormControl from 'react-bootstrap/FormControl';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import {NavLink,withRouter} from "react-router-dom";
 import {IoIosArrowBack,IoIosLock,IoIosPerson} from 'react-icons/io';
 import './index.css';
 import Controller from "../../request/controller";
 import getCookies from '../../utils/CookieTool';
 import Image from "react-bootstrap/Image";
-import isMobile from '../../utils/AgentTool';
 
-class MyNavBar extends Component{
+class PCNavBar extends Component{
     loginRequest = Controller.create("/login");
     logoutRequest = Controller.create("/logout");
 
     goBack = ()=>{
+        // window.history.back()
         this.props.history.goBack();
     };
-    // navLinkOnClick = (title) =>{
-    // };
     login = ()=>{
         let username = document.getElementById("username").value;
         let password = document.getElementById("password").value;
@@ -53,7 +50,6 @@ class MyNavBar extends Component{
 
     render() {
         let pcLoginArea=null;//电脑登录
-        let mobLoginArea=null;//手机登录
         let cookies = getCookies();
         let dropdownItem=null;//下拉栏提取出来，统一管理
         if(cookies&&cookies.id){
@@ -68,65 +64,43 @@ class MyNavBar extends Component{
             </div>
         );
         }
-        if(isMobile()) {
-            if(cookies&&cookies.id&&cookies.nickname&&cookies.username){
-                    mobLoginArea=(
-                        <Nav>
-                            <NavDropdown title={cookies.nickname} id="collasible-nav-dropdown">
-                                {dropdownItem}
-                            </NavDropdown>
-                        </Nav>
-                    )
-            }else {
-                mobLoginArea=(
-                    <div id="myNavBar-login-mo">
-                        <NavLink to={"/login"}>登录</NavLink>
-                        <span>/</span>
-                        <NavLink to={"/login?tab=signUp"} >注册</NavLink>
-                    </div>
-                );
-            }
-        }
-        else {
-            if(cookies&&cookies.id&&cookies.nickname&&cookies.username){
-                pcLoginArea=(
-                    <Nav>
-                        {/*<NavLink to={"#"} style={{"height":"1.5rem"}}>*/}
-                            <Image alt="Crop" key="avatar" src={"https://www.nbucedog.com/api/avatar/"+cookies.username} roundedCircle style={{"width":"1.5rem","height":"1.5rem"}}/>
-                        {/*</NavLink>*/}
-                        <Dropdown as={ButtonGroup}>
-                            <Dropdown.Toggle split variant="" id="dropdown-custom-2" style={{"height":"1.5rem","padding":"0 .75rem","color":"#ccc"}}/>
-                            <Dropdown.Menu className="super-colors" style={{"left":"-5.25rem"}}>
-                                {dropdownItem}
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </Nav>
-                )
-            }else {
-                pcLoginArea=(
-                    <Form inline hidden={false}>
-                        <InputGroup className="myNavBar-input">
-                            <InputGroup.Prepend>
-                                <InputGroup.Text><IoIosPerson/></InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <FormControl id="username" placeholder="用户名" aria-label="Username" aria-describedby="basic-addon1"/>
-                        </InputGroup>
-                        <InputGroup className="myNavBar-input">
-                            <InputGroup.Prepend>
-                                <InputGroup.Text><IoIosLock/></InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <FormControl id="password" type="password" placeholder="密&emsp;码" aria-label="Username" aria-describedby="basic-addon1"/>
-                        </InputGroup>
-                        <Button className="myNavBar-input" variant="outline-primary" onClick={this.login}>登录</Button>
-                        <Button className="myNavBar-input" variant="outline-success" href="/login?tab=signUp">注册</Button>
-                    </Form>
-                );
-            }
+        if(cookies&&cookies.id&&cookies.nickname&&cookies.username){
+            pcLoginArea=(
+                <Nav>
+                    {/*<NavLink to={"#"} style={{"height":"1.5rem"}}>*/}
+                        <Image alt="Crop" key="avatar" src={"https://www.nbucedog.com/api/avatar/"+cookies.username} roundedCircle style={{"width":"1.5rem","height":"1.5rem"}}/>
+                    {/*</NavLink>*/}
+                    <Dropdown as={ButtonGroup}>
+                        <Dropdown.Toggle split variant="" id="dropdown-custom-2" style={{"height":"1.5rem","padding":"0 .75rem","color":"#ccc"}}/>
+                        <Dropdown.Menu className="super-colors" style={{"left":"-5.25rem"}}>
+                            {dropdownItem}
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </Nav>
+            )
+        }else {
+            pcLoginArea=(
+                <Form inline hidden={false}>
+                    <InputGroup className="myNavBar-input">
+                        <InputGroup.Prepend>
+                            <InputGroup.Text><IoIosPerson/></InputGroup.Text>
+                        </InputGroup.Prepend>
+                        <FormControl id="username" placeholder="用户名" aria-label="Username" aria-describedby="basic-addon1"/>
+                    </InputGroup>
+                    <InputGroup className="myNavBar-input">
+                        <InputGroup.Prepend>
+                            <InputGroup.Text><IoIosLock/></InputGroup.Text>
+                        </InputGroup.Prepend>
+                        <FormControl id="password" type="password" placeholder="密&emsp;码" aria-label="Username" aria-describedby="basic-addon1"/>
+                    </InputGroup>
+                    <Button className="myNavBar-input" variant="outline-primary" onClick={this.login}>登录</Button>
+                    <Button className="myNavBar-input" variant="outline-success" href="/login?tab=signUp">注册</Button>
+                </Form>
+            );
         }
         return(
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" fixed="top" id="blog">
                 <Navbar.Brand onClick={this.goBack}><IoIosArrowBack/></Navbar.Brand>
-                <Navbar.Text style={{fontWeight:"bold"}} hidden={!isMobile()}>{this.props.title}</Navbar.Text>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
@@ -135,7 +109,6 @@ class MyNavBar extends Component{
                                 <NavLink to={item.link} key={key} className="nav-link">{item.title}</NavLink>
                             ))
                         }
-                        {mobLoginArea}
                     </Nav>
                     {pcLoginArea}
                 </Navbar.Collapse>
@@ -143,7 +116,7 @@ class MyNavBar extends Component{
         )
     }
 }
-MyNavBar.defaultProps = {
+PCNavBar.defaultProps = {
     linkArr:[{
                 link: "/blog",
                 title: "博客文章",
@@ -158,7 +131,7 @@ MyNavBar.defaultProps = {
                 title:"其他内容"
             }]
 };
-MyNavBar.protoTypes = {
+PCNavBar.protoTypes = {
     linkArr:PropTypes.array.isRequired
 };
-export default withRouter(MyNavBar);
+export default withRouter(PCNavBar);

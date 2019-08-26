@@ -13,6 +13,7 @@ import xml from 'highlight.js/lib/languages/xml'
 import javascript from 'highlight.js/lib/languages/javascript';
 import css from 'highlight.js/lib/languages/css';
 import shell from 'highlight.js/lib/languages/shell';
+import nginx from 'highlight.js/lib/languages/nginx'
 // import ('highlight.js/lib/languages/python').then(python =>{
 //    hljs.registerLanguage('python',python.)
 // });
@@ -27,6 +28,7 @@ hljs.registerLanguage('xml',xml);
 hljs.registerLanguage('javascript',javascript);
 hljs.registerLanguage('css',css);
 hljs.registerLanguage('shell',shell);
+hljs.registerLanguage('nginx',nginx);
 
  // const python = React.lazy(()=>require ('highlight.js/lib/languages/python'));
 //

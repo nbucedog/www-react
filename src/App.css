@@ -2,14 +2,16 @@
   /*text-align: center;*/
 }
 pre{
-    background: grey;
+    background: lightgray;
+    -webkit-overflow-scrolling:touch;
 }
-/*.App-logo {*/
-  /*animation: App-logo-spin infinite 20s linear;*/
-  /*height: 40vmin;*/
-  /*pointer-events: none;*/
-/*}*/
-
+img{
+    vertical-align: initial !important;
+}
+p{
+    /*word-wrap: break-word;*/
+    word-break: break-all;
+}
 /*.App-header {*/
   /*background-color: #282c34;*/
   /*min-height: 100vh;*/
@@ -25,7 +27,7 @@ pre{
   /*color: #61dafb;*/
 /*}*/
 
-/*@keyframes App-logo-spin {*/
+/*@keyframes App-loading-spin {*/
   /*from {*/
     /*transform: rotate(0deg);*/
   /*}*/

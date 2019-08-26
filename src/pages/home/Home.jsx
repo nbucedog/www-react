@@ -16,7 +16,7 @@ class Home extends Component{
                     <ul id="ul-option">
                         <li className="li-option"><Link className='a-option' to={'/blog'}>博客文章</Link></li>
                         <li className="li-option"><Link className='a-option' to={'/comment'}>留言社区</Link></li>
-                        <li className="li-option"><Link className='a-option' to={'/app'}>软件分享</Link></li>
+                        <li className="li-option"><Link className='a-option' to={'/resource'}>资源分享</Link></li>
                         <li className="li-option"><Link className='a-option' to={'/others'}>其他内容</Link></li>
                     </ul>
                 </div>
