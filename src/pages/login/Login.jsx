@@ -11,6 +11,7 @@ import Row from "react-bootstrap/Row";
 import Col from 'react-bootstrap/Col';
 import './login.css';
 import getUrlParamByName from '../../utils/UrlTool';
+import getCharLength from '../../utils/StringTool';
 import Controller from '../../request/controller';
 
 class Login extends Component{
@@ -50,6 +51,10 @@ class Login extends Component{
             return;
         }
         let nickname = document.getElementById("formSignUpNickname").value;
+        if(getCharLength(nickname)>14){
+            alert("昵称最多包含7个全角(14个半角)字符");
+            return
+        }
         let sex;
         for (let item of document.getElementsByName("sex")){
             if(item.checked===true){
@@ -101,7 +106,7 @@ class Login extends Component{
                                             <Form onSubmit={this.login}>
                                                 <Form.Group controlId="formLoginUsername">
                                                     <Form.Label>用户名</Form.Label>
-                                                    <Form.Control type="text" placeholder="Username"  required={true} maxLength="10"/>
+                                                    <Form.Control type="text" placeholder="Username"  required={true} maxLength="40"/>
                                                 </Form.Group>
                                                 <Form.Group controlId="formLoginPassword">
                                                     <Form.Label>密&emsp;码</Form.Label>
@@ -118,7 +123,7 @@ class Login extends Component{
                                             <Form onSubmit={this.signUp}>
                                                 <Form.Group controlId="formSignUpUsername">
                                                     <Form.Label>邮&emsp;箱<span style={redStar}>*</span></Form.Label>
-                                                    <Form.Control type="email" placeholder="Email address" required={true} maxLength="10"/>
+                                                    <Form.Control type="email" placeholder="Email address" required={true} maxLength="40"/>
                                                 </Form.Group>
                                                 <Form.Group controlId="formSignUpPassword">
                                                     <Form.Label>密&emsp;码<span style={redStar}>*</span></Form.Label>
@@ -130,7 +135,7 @@ class Login extends Component{
                                                 </Form.Group>
                                                 <Form.Group controlId="formSignUpNickname">
                                                     <Form.Label>昵&emsp;称<span style={redStar}>*</span></Form.Label>
-                                                    <Form.Control type="text" placeholder="Nickname" required={true} maxLength="10"/>
+                                                    <Form.Control type="text" placeholder="Nickname" required={true} maxLength="14"/>
                                                 </Form.Group>
                                                 <Form.Group>
                                                     <Form.Label>头&emsp;像</Form.Label>

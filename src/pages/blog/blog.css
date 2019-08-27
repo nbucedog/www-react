@@ -4,19 +4,19 @@
 .blog-information1{
     color: grey;
     padding-top: 0.2rem;
-    padding-right: 0;
+    padding-right: 0 !important;
 }
 .blog-information2{
     color: grey;
     padding-top: 0.2rem;
-    padding-left: 0;
+    padding-left: 0 !important;
 }
 .blog-information-icon{
     font-size: 0.9rem;
 }
 .blog-information-item{
     font-size: 0.6rem;
-    margin-right: 0.6rem;
+    margin-right: 0.3rem;
 }
 .blog-a-title{
     color: black;

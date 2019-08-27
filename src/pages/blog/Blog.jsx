@@ -110,7 +110,7 @@ class Blog extends Component{
                                         <Row>
                                         <Col className="blog-information1">
                                             <IoMdTime className="blog-information-icon"/><span className="blog-information-item">{item.date}</span>
-                                            <IoIosPerson className="blog-information-icon"/><span className="blog-information-item">{item.nickname}</span>
+                                            <IoIosPerson className="blog-information-icon"/><span className="blog-information-item" style={{marginRight:"0"}}>{item.nickname}</span>
                                         </Col>
                                         <Col className="blog-information2" xs="auto">
                                             <FiEye className="blog-information-icon"/><span className="blog-information-item">{item.views}</span>

@@ -29,7 +29,7 @@ class Article extends Component{
                 thumbs:0,
                 views:0,
                 content:"",
-                reviewList:[],
+                reviewSet:[],
                 tagSet:[]
             }
         }
@@ -96,7 +96,7 @@ class Article extends Component{
                                         <Col className="blog-information2" xs="auto">
                                             <FiEye className="blog-information-icon"/><span className="blog-information-item">{this.state.data.views}</span>
                                             <FiThumbsUp className="blog-information-icon"/><span className="blog-information-item">{this.state.data.thumbs}</span>
-                                            <FiMessageSquare className="blog-information-icon"/><span className="blog-information-item" style={{marginRight:"0"}}>{this.state.data.reviewList.length}</span>
+                                            <FiMessageSquare className="blog-information-icon"/><span className="blog-information-item" style={{marginRight:"0"}}>{this.state.data.reviewSet.length}</span>
                                         </Col>
                                     </Row>
                                 </Card.Header>
