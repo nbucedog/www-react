@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
-import Container from 'react-bootstrap/Container';
 import MyFramework from '../../components/myFrameWork';
 import Jumbotron from "react-bootstrap/Jumbotron";
+import Col from 'react-bootstrap/Col'
 
 class Others extends Component{
     componentDidMount() {
@@ -11,16 +11,12 @@ class Others extends Component{
 
     render() {
         return(
-            <div hidden={this.props.hidden}>
-                <Container>
-                    <div className="article-content">
-                        <Jumbotron style={{padding:"1rem 1rem",marginBottom:".5rem"}}>
-                            <p>敬请期待</p>
-                        </Jumbotron>
-                    </div>
-                </Container>
-            </div>
+            <Col lg="8" {...this.props}>
+                <Jumbotron style={{padding:"1rem 1rem",marginBottom:".5rem"}}>
+                    <p>敬请期待</p>
+                </Jumbotron>
+            </Col>
         );
     }
 }
-export default MyFramework("其他内容")(Others);
+export default MyFramework("其他内容",true)(Others);

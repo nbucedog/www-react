@@ -10,7 +10,7 @@ const inputStyle = {
 };
 
 const imageStyle={
-    maxWidth:"50%",
+    width:"50%",
 };
 
 class ImageCrop extends PureComponent {

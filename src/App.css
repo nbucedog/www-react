@@ -38,13 +38,13 @@ p{
 a:hover,a:visited{
     text-decoration: none;
 }
-.container{
-    margin-top: 4rem;
-}
 .card{
     margin-bottom: 0.4rem;
     word-wrap: normal !important;
 }
 .badge{
   margin-right: 6px;
+}
+.ReactCrop__image{
+    max-height: initial !important;
 }

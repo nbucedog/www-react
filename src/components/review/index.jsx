@@ -11,12 +11,19 @@ import getCookies from "../../utils/CookieTool";
 import Controller from '../../request/controller';
 import VisibilitySensor from 'react-visibility-sensor';
 
+const textStyle={
+    width:"100%",
+    border:"1px solid #ced4da",
+    borderRadius:"4px"
+};
+
 class Review extends Component{
     constructor(props){
         super(props);
         this.state={
             currentKey:null,
             data:null,
+            total:0
         }
     }
 
@@ -26,8 +33,11 @@ class Review extends Component{
 
     submit = (e)=>{
         e.preventDefault();
+        let button = e.currentTarget.button;
+        button.disabled=true;
         let content = document.getElementById("review-content").value;
-        let user={"id":getCookies().id,"username":getCookies().username};
+        const cookies = getCookies();
+        let user={"id":cookies.id,"username":cookies.username};
         let data={
             "user":user,
             "content":content,
@@ -46,6 +56,7 @@ class Review extends Component{
             }else {
                 alert(res.errmsg);
             }
+            button.disabled=false;
         })
     };
 
@@ -54,6 +65,7 @@ class Review extends Component{
             if(res.errcode<500){
                 this.setState({
                     data:res.data,
+                    total:res.data.length,
                     currentKey:null
                 })
             }else {
@@ -64,6 +76,8 @@ class Review extends Component{
 
     submitReply = (e,reviewId,rUserId)=>{
         e.preventDefault();
+        let button = e.currentTarget.button;
+        button.disabled=true;
         let content = document.getElementById("review-reply-"+this.state.currentKey).value;
         let user={"id":getCookies().id};
         let rUser={"id":rUserId};
@@ -81,11 +95,12 @@ class Review extends Component{
             }else {
                 alert(res.errmsg);
             }
+            button.disabled=false;
         })
     };
 
     showInput = (key)=>{
-        let cookies = getCookies();
+        const cookies = getCookies();
         if(!(cookies&&cookies.id&&cookies.nickname&&cookies.username)){
             return;
         }
@@ -101,13 +116,9 @@ class Review extends Component{
     };
 
     render() {
+        const cookies = getCookies();
         let data = this.state.data;
-        const textStyle={
-            width:"100%",
-            border:"1px solid #ced4da",
-            borderRadius:"4px"
-        };
-        let cookies = getCookies();
+        let total = this.state.total;
         let commentArea=(
             <Jumbotron style={{padding:"1rem 1rem",marginBottom:".5rem"}}>
                 <h5>登录后可以评论！</h5>
@@ -122,88 +133,94 @@ class Review extends Component{
                     </Col>
                     <Col>
                         <Form onSubmit={this.submit}>
-                            <textarea id="review-content" placeholder="你想说点什么吗" style={textStyle}/>
-                            <Button variant="primary" type="submit">评论</Button>
+                            <textarea id="review-content" placeholder="你想说点什么吗" style={textStyle} required={true}/>
+                            <Button variant="primary" type="submit" name="button">评论</Button>
                         </Form>
                     </Col>
                 </Row>
             );
         }
         return(
-            <Row className="justify-content-md-center">
-                <Col lg="10">
-                    <Card>
-                        <Card.Header className="article-header">
-                            {commentArea}
-                        </Card.Header>
-                        <ListGroup variant="flush">
-                            {
-                                data?
-                                    (data.length!==0?
-                                    data.map((review,key)=>(
-                                        <ListGroup.Item className="article-content" key={key}>
+            <Card  style={{marginBottom: "3rem"}}>
+                <Card.Header className="article-header">
+                    {commentArea}
+                </Card.Header>
+                <ListGroup variant="flush">
+                    {
+                        data?
+                            (data.length!==0?
+                            data.map((review,key)=>(
+                                <ListGroup.Item className="article-content" key={key}>
+                                    <Row>
+                                        <Col xs="auto" style={{paddingRight:"0"}}>
                                             <Row>
-                                                <Col xs="auto" style={{paddingRight:"0"}}>
-                                                    <Image alt="Crop" key="avatar" src={"https://www.nbucedog.com/api/avatar/"+review.user.username} roundedCircle style={{"width":"2rem","height":"2rem"}}/>
-                                                </Col>
                                                 <Col>
-                                                    <Row>
-                                                        <Col style={{paddingRight:"0"}}>
-                                                            {review.user.nickname}：
-                                                        </Col>
-                                                        <Col xs="auto" style={{paddingLeft:"0"}}>
-                                                            <span style={{color:"grey",fontSize:".85rem",display:"inline-block"}}>{review.date}</span>
-                                                        </Col>
-                                                    </Row>
-                                                    <div style={{padding:".35rem 0",margin:".15rem 0",background:"#f9f9f9"}} onClick={()=>this.showInput(key)}>
-                                                        <span style={{color:"#555",display:"inline-block"}}>
-                                                            {review.content}
-                                                        </span>
-                                                    </div>
-                                                    <Form onSubmit={(e)=>this.submitReply(e,review.id,review.user.id)} hidden={!(key===this.state.currentKey)}>
-                                                        <textarea id={"review-reply-"+key} placeholder={"回复"+review.user.nickname} style={textStyle}/>
-                                                        <Button variant="primary" type="submit">回复</Button>
-                                                    </Form>
-                                                    {
-                                                        review.reviewReplyList&&review.reviewReplyList.length!==0?
-                                                        review.reviewReplyList.map((reviewReply,key1)=>(
-                                                            <div key={key1}>
-                                                                <div  style={{background:"#f9f9f9",padding:".15rem 0"}} onClick={()=>this.showInput(key+"-"+key1)}>
-                                                                    <span>{reviewReply.user.nickname}</span><strong style={{color:"#36648B"}}>@</strong><span>{reviewReply.rUser.nickname}：</span>
-                                                                    <span style={{color:"#555",background:"#f9f9f9"}}>{reviewReply.content}</span>
-                                                                </div>
-                                                                <Form onSubmit={(e)=>this.submitReply(e,review.id,reviewReply.user.id)} hidden={!((key+"-"+key1)===this.state.currentKey)}>
-                                                                    <textarea id={"review-reply-"+key+"-"+key1} placeholder={"回复"+reviewReply.user.nickname} style={textStyle}/>
-                                                                    <Button variant="primary" type="submit">回复</Button>
-                                                                </Form>
-                                                            </div>
-                                                        ))
-                                                            :
-                                                        null
-                                                    }
+                                                <Image alt="Crop" key="avatar" src={"https://www.nbucedog.com/api/avatar/"+review.user.username} roundedCircle style={{"width":"2.2rem","height":"2.2rem"}}/>
                                                 </Col>
                                             </Row>
-                                        </ListGroup.Item>
-                                    ))
-                                        :
-                                    <div className="article-content">
-                                        <Jumbotron style={{padding:"1rem 1rem",marginBottom:".5rem"}}>
-                                            <p>来成为第一个评论的人吧！</p>
-                                        </Jumbotron>
-                                    </div>)
-                                    :
-                                <div className="article-content">
-                                    <VisibilitySensor onChange={this.reachBottom}>
-                                        <div style={{textAlign:"center"}}>
-                                            <img src="https://www.nbucedog.com/loading.svg" alt="loading"/>
-                                        </div>
-                                    </VisibilitySensor>
+                                            <Row>
+                                                <Col style={{fontSize:".75rem",textAlign:"center"}}>
+                                                    {total-key}楼
+                                                </Col>
+                                            </Row>
+
+                                        </Col>
+                                        <Col  style={{paddingLeft:".5rem",paddingBottom:".15rem"}}>
+                                            <Row>
+                                                <Col style={{paddingRight:"0"}}>
+                                                    {review.user.nickname}：
+                                                </Col>
+                                                <Col xs="auto" style={{paddingLeft:"0"}}>
+                                                    <span style={{color:"grey",fontSize:".85rem",display:"inline-block"}}>{review.date}</span>
+                                                </Col>
+                                            </Row>
+                                            <div style={{padding:".35rem .1rem .35rem .5rem",margin:".15rem 0",background:"#f9f9f9"}} onClick={()=>this.showInput(key)}>
+                                                <span style={{color:"#555",display:"inline-block"}}>
+                                                    {review.content}
+                                                </span>
+                                            </div>
+                                            <Form onSubmit={(e)=>this.submitReply(e,review.id,review.user.id)} hidden={!(key===this.state.currentKey)}>
+                                                <textarea id={"review-reply-"+key} placeholder={"回复"+review.user.nickname} style={textStyle} required={true}/>
+                                                <Button variant="primary" type="submit" name="button">回复</Button>
+                                            </Form>
+                                            {
+                                                review.reviewReplyList&&review.reviewReplyList.length!==0?
+                                                review.reviewReplyList.map((reviewReply,key1)=>(
+                                                    <div key={key1}>
+                                                        <div  style={{background:"#f9f9f9",padding:".15rem .1rem .15rem .5rem"}} onClick={()=>this.showInput(key+"-"+key1)}>
+                                                            <span>{reviewReply.user.nickname}</span><strong style={{color:"#36648B"}}>@</strong><span>{reviewReply.rUser.nickname}：</span>
+                                                            <span style={{color:"#555",background:"#f9f9f9"}}>{reviewReply.content}</span>
+                                                        </div>
+                                                        <Form onSubmit={(e)=>this.submitReply(e,review.id,reviewReply.user.id)} hidden={!((key+"-"+key1)===this.state.currentKey)}>
+                                                            <textarea id={"review-reply-"+key+"-"+key1} placeholder={"回复"+reviewReply.user.nickname} style={textStyle} required={true}/>
+                                                            <Button variant="primary" type="submit" name="button">回复</Button>
+                                                        </Form>
+                                                    </div>
+                                                ))
+                                                    :
+                                                null
+                                            }
+                                        </Col>
+                                    </Row>
+                                </ListGroup.Item>
+                            ))
+                                :
+                            <div className="article-content">
+                                <Jumbotron style={{padding:"1rem 1rem",marginBottom:".5rem"}}>
+                                    <p>来成为第一个评论的人吧！</p>
+                                </Jumbotron>
+                            </div>)
+                            :
+                        <div className="article-content">
+                            <VisibilitySensor onChange={this.reachBottom}>
+                                <div style={{textAlign:"center"}}>
+                                    <img src="https://www.nbucedog.com/loading.svg" alt="loading"/>
                                 </div>
-                            }
-                        </ListGroup>
-                    </Card>
-                </Col>
-            </Row>
+                            </VisibilitySensor>
+                        </div>
+                    }
+                </ListGroup>
+            </Card>
         )
     }
 }

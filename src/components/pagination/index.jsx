@@ -1,5 +1,6 @@
 import React,{Component} from 'react'
 import Pagination from 'react-bootstrap/Pagination'
+import {withRouter} from 'react-router-dom'
 
 
 class myPagination extends Component{
@@ -7,12 +8,15 @@ class myPagination extends Component{
         if(pageIndex===this.props.pageIndex){
             return;
         }
-        this.props.onPageChange(pageIndex);
+        // this.props.onPageChange(pageIndex);
+        // this.props.history.push("/blog?page="+pageIndex)
+        window.location.href="/blog?page="+pageIndex;
     };
     render() {
         let items = [];
         let pageNumber=Math.ceil(this.props.total/this.props.pageSize);
-        let pageIndex=this.props.pageIndex;
+        let pageIndex=parseInt(this.props.pageIndex);
+        console.log(pageIndex);
         if(pageNumber<=7){
             for (let i=1;i<=pageNumber;i++){
                 items.push(<Pagination.Item key={i} active={pageIndex===i} onClick={()=>this.onPageClick(i)}>{i}</Pagination.Item>)
@@ -50,4 +54,4 @@ class myPagination extends Component{
         )
     }
 }
-export default myPagination
+export default withRouter(myPagination)

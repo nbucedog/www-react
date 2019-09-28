@@ -4,7 +4,6 @@ import CodeBlock from '../../../components/codeBlock'
 import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import {IoMdTime,IoIosPerson} from 'react-icons/io';
 import {FiThumbsUp,FiEye,FiMessageSquare} from 'react-icons/fi';
@@ -60,56 +59,50 @@ class Article extends Component{
     };
 
     render() {
-        let cookies = getCookies();
+        const cookies = getCookies();
         let username=null;
         if(cookies&&cookies.username){
             username=cookies.username;
         }
         return(
-            <div className="result-pane" hidden={this.props.hidden}>
-                <Container>
-                    <Row className="justify-content-md-center">
-                        <Col lg="10">
-                            <Card>
-                                <Card.Header className="article-header">
-                                    <Row>
-                                        <Col>
-                                            <h5 style={{"display":"inline"}}>{this.state.data.title}</h5>
-                                        </Col>
-                                        {
-                                            this.state.data.user.username===username ?
-                                                <Col xs="auto" style={{paddingLeft:"0"}}>
-                                                    <Button variant="outline-success" style={{height:"1.5rem",fontSize:"0.65rem",padding:"0 .75rem"}} onClick={()=>this.onEdit(this.state.data.id)}>编辑</Button>
-                                                </Col>
-                                                :
-                                                null
-                                        }
-                                    </Row>
-                                    {this.state.data.tagSet.map((tag,key)=>(
-                                        <Badge key={key} pill variant={tag.color}>{tag.tag}</Badge>
-                                    ))}
-                                    <Row>
-                                        <Col className="blog-information1">
-                                            <IoMdTime className="blog-information-icon"/><span className="blog-information-item">{this.state.data.date}</span>
-                                            <IoIosPerson className="blog-information-icon"/><span className="blog-information-item">{this.state.data.user.nickname}</span>
-                                        </Col>
-                                        <Col className="blog-information2" xs="auto">
-                                            <FiEye className="blog-information-icon"/><span className="blog-information-item">{this.state.data.views}</span>
-                                            <FiThumbsUp className="blog-information-icon"/><span className="blog-information-item">{this.state.data.thumbs}</span>
-                                            <FiMessageSquare className="blog-information-icon"/><span className="blog-information-item" style={{marginRight:"0"}}>{this.state.data.reviewSet.length}</span>
-                                        </Col>
-                                    </Row>
-                                </Card.Header>
-                                <div className="article-content">
-                                    <MarkDown className="result" source={this.state.data.content} renderers={{code:CodeBlock}}/>
-                                </div>
-                            </Card>
-                        </Col>
-                    </Row>
-                    <Review article={this.state.data.id} request="/review"/>
-                </Container>
-            </div>
+            <Col lg="8" {...this.props}>
+                <Card>
+                    <Card.Header className="article-header">
+                        <Row>
+                            <Col>
+                                <h5 style={{"display":"inline"}}>{this.state.data.title}</h5>
+                            </Col>
+                            {
+                                this.state.data.user.username===username ?
+                                    <Col xs="auto" style={{paddingLeft:"0"}}>
+                                        <Button variant="outline-success" style={{height:"1.5rem",fontSize:"0.65rem",padding:"0 .75rem"}} onClick={()=>this.onEdit(this.state.data.id)}>编辑</Button>
+                                    </Col>
+                                    :
+                                    null
+                            }
+                        </Row>
+                        {this.state.data.tagSet.map((tag,key)=>(
+                            <Badge key={key} pill variant={tag.color}>{tag.tag}</Badge>
+                        ))}
+                        <Row>
+                            <Col className="blog-information1">
+                                <IoMdTime className="blog-information-icon"/><span className="blog-information-item">{this.state.data.date}</span>
+                                <IoIosPerson className="blog-information-icon"/><span className="blog-information-item">{this.state.data.user.nickname}</span>
+                            </Col>
+                            <Col className="blog-information2" xs="auto">
+                                <FiEye className="blog-information-icon"/><span className="blog-information-item">{this.state.data.views}</span>
+                                <FiThumbsUp className="blog-information-icon"/><span className="blog-information-item">{this.state.data.thumbs}</span>
+                                <FiMessageSquare className="blog-information-icon"/><span className="blog-information-item" style={{marginRight:"0"}}>{this.state.data.reviewSet.length}</span>
+                            </Col>
+                        </Row>
+                    </Card.Header>
+                    <div className="article-content">
+                        <MarkDown className="result" source={this.state.data.content} renderers={{code:CodeBlock}}/>
+                    </div>
+                </Card>
+                <Review article={this.state.data.id} request="/review"/>
+            </Col>
         )
     }
 }
-export default MyFramework("文章内容")(withRouter(Article));
+export default MyFramework("文章内容",true)(withRouter(Article));

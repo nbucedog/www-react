@@ -1,7 +1,7 @@
 import React,{Component} from 'react'
-import Container from 'react-bootstrap/Container';
 import MyFramework from '../../components/myFrameWork';
 import Review from "../../components/review";
+import Col from "react-bootstrap/Col";
 
 class Comment extends Component{
     componentDidMount() {
@@ -11,13 +11,10 @@ class Comment extends Component{
 
     render() {
         return(
-            <div hidden={this.props.hidden}>
-                <Container>
-                    <Review request="/comment"/>
-                </Container>
-            </div>
+            <Col lg="8" {...this.props}>
+                <Review request="/comment"/>
+            </Col>
         );
     }
 }
-export default MyFramework("留言社区")(Comment)
-// export default Comment;
+export default MyFramework("留言社区",true)(Comment)

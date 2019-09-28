@@ -1,6 +1,5 @@
 import React,{Component} from "react";
 import MyFramework from '../../components/myFrameWork';
-import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
@@ -55,6 +54,8 @@ class Login extends Component{
             alert("昵称最多包含7个全角(14个半角)字符");
             return
         }
+        let button = e.currentTarget.button;
+        button.disabled=true;
         let sex;
         for (let item of document.getElementsByName("sex")){
             if(item.checked===true){
@@ -63,21 +64,23 @@ class Login extends Component{
         }
         let avatar = this.state.avatar;
         let phone = document.getElementById("formSignUpPhone").value;
-        // let email = document.getElementById("formSignUpEmail").value;
         let formData = new FormData();
         formData.append("username",username);
         formData.append("password",password);
         formData.append("nickname",nickname);
         formData.append("sex",sex);
         formData.append("phone",phone);
-        // formData.append("email",email);
         formData.append("file",avatar);
         this.userRequest.post(formData).then(res=>{
+            button.disabled=false;
             alert(res.errmsg)
         });
     };
 
     login = (e)=>{
+        e.preventDefault();
+        let button = e.currentTarget.button;
+        button.disabled=true;
         let username = document.getElementById("formLoginUsername").value;
         let password = document.getElementById("formLoginPassword").value;
         let data ={"username":username,"password":password,"remember-me":true};
@@ -85,9 +88,10 @@ class Login extends Component{
             alert(res.errmsg);
             if(res.errcode<400){
                 window.history.back()
+            }else {
+                button.disabled=false;
             }
         });
-        e.preventDefault();
     };
 
     render() {
@@ -95,88 +99,75 @@ class Login extends Component{
             color:"red"
         };
         return(
-            <div hidden={this.props.hidden}>
-                <Container>
-                    <Row className="justify-content-md-center">
-                        <Col lg="10" style={{"paddingBottom":"2rem"}}>
-                            <Tabs defaultActiveKey={this.state.tab}>
-                                <Tab eventKey="login" title="登录">
-                                    <Row className="justify-content-md-center">
-                                        <Col lg="6">
-                                            <Form onSubmit={this.login}>
-                                                <Form.Group controlId="formLoginUsername">
-                                                    <Form.Label>用户名</Form.Label>
-                                                    <Form.Control type="text" placeholder="Username"  required={true} maxLength="40"/>
-                                                </Form.Group>
-                                                <Form.Group controlId="formLoginPassword">
-                                                    <Form.Label>密&emsp;码</Form.Label>
-                                                    <Form.Control type="password" placeholder="Password" required={true}/>
-                                                </Form.Group>
-                                                <Button variant="primary" type="submit">登录</Button>
-                                            </Form>
-                                        </Col>
-                                    </Row>
-                                </Tab>
-                                <Tab eventKey="signUp" title="注册">
-                                    <Row className="justify-content-md-center">
-                                        <Col lg="6">
-                                            <Form onSubmit={this.signUp}>
-                                                <Form.Group controlId="formSignUpUsername">
-                                                    <Form.Label>邮&emsp;箱<span style={redStar}>*</span></Form.Label>
-                                                    <Form.Control type="email" placeholder="Email address" required={true} maxLength="40"/>
-                                                </Form.Group>
-                                                <Form.Group controlId="formSignUpPassword">
-                                                    <Form.Label>密&emsp;码<span style={redStar}>*</span></Form.Label>
-                                                    <Form.Control type="password" placeholder="Password" required={true}/>
-                                                </Form.Group>
-                                                <Form.Group controlId="formSignUpConfirm">
-                                                    <Form.Label>确认密码<span style={redStar}>*</span></Form.Label>
-                                                    <Form.Control type="password" placeholder="Confirm the password" required={true}/>
-                                                </Form.Group>
-                                                <Form.Group controlId="formSignUpNickname">
-                                                    <Form.Label>昵&emsp;称<span style={redStar}>*</span></Form.Label>
-                                                    <Form.Control type="text" placeholder="Nickname" required={true} maxLength="14"/>
-                                                </Form.Group>
-                                                <Form.Group>
-                                                    <Form.Label>头&emsp;像</Form.Label>
-                                                    <ImageCrop getAvatar={this.getAvatar}/>
-                                                </Form.Group>
-                                                <Form.Group>
-                                                    <Form.Label>性&emsp;别</Form.Label><br/>
-                                                    <Form.Label><input type="radio" name="sex" value="male" defaultChecked="defaultChecked"/>&nbsp;男</Form.Label>&emsp;
-                                                    <Form.Label><input type="radio" name="sex" value="female"/>&nbsp;女</Form.Label>
-                                                </Form.Group>
-                                                <Form.Group controlId="formSignUpPhone">
-                                                    <Form.Label>电话号码</Form.Label>
-                                                    <InputGroup className="mb-3">
-                                                        <Form.Control placeholder="Phone number" type="number" maxLength="13"/>
-                                                        <InputGroup.Append><Button variant="info">验证</Button></InputGroup.Append>
-                                                        <div style={{"width":"100%","paddingLeft":"5px"}}>
-                                                            <Form.Text className="text-muted">We'll never share your phone number with anyone else.</Form.Text>
-                                                        </div>
-                                                    </InputGroup>
-                                                </Form.Group>
-                                                {/*<Form.Group controlId="formSignUpEmail">*/}
-                                                    {/*<Form.Label>邮&emsp;箱</Form.Label>*/}
-                                                    {/*<InputGroup className="mb-3">*/}
-                                                        {/*<Form.Control placeholder="Email address" type="email"/>*/}
-                                                        {/*<InputGroup.Append><Button variant="info">验证</Button></InputGroup.Append>*/}
-                                                    {/*</InputGroup>*/}
-                                                {/*</Form.Group>*/}
-                                                <Form.Group>
-                                                    <Form.Check type="checkbox" label="我已不管你有没有阅读协议" defaultChecked="defaultChecked"/>
-                                                </Form.Group>
-                                                <Button variant="primary" type="submit">注册</Button>
-                                            </Form>
-                                        </Col>
-                                    </Row>
-                                </Tab>
-                            </Tabs>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
+            <Col lg="8" {...this.props}>
+                <Tabs defaultActiveKey={this.state.tab}>
+                    <Tab eventKey="login" title="登录" style={{"paddingBottom":"2rem"}}>
+                        <Row className="justify-content-md-center">
+                            <Col lg="6">
+                                <Form onSubmit={this.login}>
+                                    <Form.Group controlId="formLoginUsername">
+                                        <Form.Label>用户名</Form.Label>
+                                        <Form.Control type="text" placeholder="Username"  required={true} maxLength="40"/>
+                                    </Form.Group>
+                                    <Form.Group controlId="formLoginPassword">
+                                        <Form.Label>密&emsp;码</Form.Label>
+                                        <Form.Control type="password" placeholder="Password" required={true}/>
+                                    </Form.Group>
+                                    <Button variant="primary" type="submit" name="button">登录</Button>
+                                </Form>
+                            </Col>
+                        </Row>
+                    </Tab>
+                    <Tab eventKey="signUp" title="注册" style={{"paddingBottom":"2rem"}}>
+                        <Row className="justify-content-md-center">
+                            <Col lg="6">
+                                <Form onSubmit={this.signUp}>
+                                    <Form.Group controlId="formSignUpUsername">
+                                        <Form.Label>邮&emsp;箱<span style={redStar}>*</span></Form.Label>
+                                        <Form.Control type="email" placeholder="Email address" required={true} maxLength="40"/>
+                                    </Form.Group>
+                                    <Form.Group controlId="formSignUpPassword">
+                                        <Form.Label>密&emsp;码<span style={redStar}>*</span></Form.Label>
+                                        <Form.Control type="password" placeholder="Password" required={true}/>
+                                    </Form.Group>
+                                    <Form.Group controlId="formSignUpConfirm">
+                                        <Form.Label>确认密码<span style={redStar}>*</span></Form.Label>
+                                        <Form.Control type="password" placeholder="Confirm the password" required={true}/>
+                                    </Form.Group>
+                                    <Form.Group controlId="formSignUpNickname">
+                                        <Form.Label>昵&emsp;称<span style={redStar}>*</span></Form.Label>
+                                        <Form.Control type="text" placeholder="Nickname" required={true} maxLength="14"/>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <Form.Label>头&emsp;像</Form.Label>
+                                        <ImageCrop getAvatar={this.getAvatar}/>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <Form.Label>性&emsp;别</Form.Label><br/>
+                                        <Form.Label><input type="radio" name="sex" value="male" defaultChecked="defaultChecked"/>&nbsp;男</Form.Label>&emsp;
+                                        <Form.Label><input type="radio" name="sex" value="female"/>&nbsp;女</Form.Label>
+                                    </Form.Group>
+                                    <Form.Group controlId="formSignUpPhone">
+                                        <Form.Label>电话号码</Form.Label>
+                                        <InputGroup className="mb-3">
+                                            <Form.Control placeholder="Phone number" type="number" maxLength="13"/>
+                                            <InputGroup.Append><Button variant="info">验证</Button></InputGroup.Append>
+                                            <div style={{"width":"100%","paddingLeft":"5px"}}>
+                                                <Form.Text className="text-muted">We'll never share your phone number with anyone else.</Form.Text>
+                                            </div>
+                                        </InputGroup>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <Form.Check type="checkbox" label="我已不管你有没有阅读协议" defaultChecked="defaultChecked"/>
+                                    </Form.Group>
+                                    <Button variant="primary" type="submit" name="button">注册</Button>
+                                </Form>
+                            </Col>
+                        </Row>
+                    </Tab>
+                </Tabs>
+            </Col>
         )
     }
 }
-export default MyFramework("登录注册")(Login);
+export default MyFramework("登录注册",true)(Login);

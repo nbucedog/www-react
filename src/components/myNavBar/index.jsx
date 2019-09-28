@@ -26,18 +26,22 @@ class MyNavBar extends Component{
     };
     // navLinkOnClick = (title) =>{
     // };
-    login = ()=>{
+    login = (e)=>{
         let username = document.getElementById("username").value;
         let password = document.getElementById("password").value;
         if(username==="" || password===""){
             alert("账号或密码不能为空");
             return;
         }
+        let button = e.currentTarget;
+        button.disabled=true;
         let data ={"username":username,"password":password,"remember-me":true};
         this.loginRequest.postForm(data).then(res=>{
             alert(res.errmsg);
             if(res.errcode<400){
                 window.location.reload()
+            }else {
+                button.disabled=false;
             }
         });
     };
@@ -52,9 +56,9 @@ class MyNavBar extends Component{
     };
 
     render() {
+        const cookies = getCookies();
         let pcLoginArea=null;//电脑登录
         let mobLoginArea=null;//手机登录
-        let cookies = getCookies();
         let dropdownItem=null;//下拉栏提取出来，统一管理
         if(cookies&&cookies.id){
             dropdownItem = (

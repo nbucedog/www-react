@@ -107,7 +107,9 @@ class Editor extends Component{
         };
     };
 
-    submit = (publish)=>{
+    submit = (e,publish)=>{
+        let button = e.currentTarget;
+        button.disabled=true;
         let submitJson = this.getSubmitJson();
         submitJson["publish"]=publish;
         if(submitJson["id"]){
@@ -115,6 +117,8 @@ class Editor extends Component{
                 alert(res.errmsg);
                 if(res.errcode<500){
                     this.props.history.goBack();
+                }else {
+                    button.disabled=false;
                 }
             })
         }else {
@@ -122,6 +126,8 @@ class Editor extends Component{
                 alert(res.errmsg);
                 if(res.errcode<500){
                     this.props.history.goBack();
+                }else {
+                    button.disabled=false;
                 }
             })
         }
@@ -133,7 +139,7 @@ class Editor extends Component{
     render() {
         return(
             this.state.userId?
-            <div className="editor-container" hidden={this.props.hidden}>
+            <div className="editor-container" {...this.props}>
                 <Row>
                     <Col xs="auto">
                         标题:
@@ -168,8 +174,8 @@ class Editor extends Component{
                         </div>
                     </Col>
                 </Row>
-                <Button className="myNavBar-input" variant="outline-primary" onClick={()=>this.submit(true)}>保存并发布</Button>
-                <Button className="myNavBar-input" variant="outline-success" onClick={()=>this.submit(false)}>保存草稿</Button>
+                <Button className="myNavBar-input" variant="outline-primary" onClick={(e)=>this.submit(e,true)}>保存并发布</Button>
+                <Button className="myNavBar-input" variant="outline-success" onClick={(e)=>this.submit(e,false)}>保存草稿</Button>
                 <Button className="myNavBar-input" variant="outline-danger" onClick={this.cancelRelease}>取消发布</Button>
             </div>
                 :
@@ -179,4 +185,4 @@ class Editor extends Component{
         )
     }
 }
-export default MyFrameWork("文章编辑")(withRouter(Editor));
+export default MyFrameWork("文章编辑",false)(withRouter(Editor));
