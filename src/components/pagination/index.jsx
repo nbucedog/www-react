@@ -16,7 +16,6 @@ class myPagination extends Component{
         let items = [];
         let pageNumber=Math.ceil(this.props.total/this.props.pageSize);
         let pageIndex=parseInt(this.props.pageIndex);
-        console.log(pageIndex);
         if(pageNumber<=7){
             for (let i=1;i<=pageNumber;i++){
                 items.push(<Pagination.Item key={i} active={pageIndex===i} onClick={()=>this.onPageClick(i)}>{i}</Pagination.Item>)

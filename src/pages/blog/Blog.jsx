@@ -43,7 +43,7 @@ class Blog extends Component{
             total:res.total,
             pageIndex:pageIndex
         });
-        sessionStorage.setItem("pageIndex",pageIndex);
+        // sessionStorage.setItem("pageIndex",pageIndex);
         return false;
     }
 

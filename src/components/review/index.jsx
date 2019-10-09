@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Image from "react-bootstrap/Image";
 import Jumbotron from 'react-bootstrap/Jumbotron';
+import Modal from 'react-bootstrap/Modal';
 import getCookies from "../../utils/CookieTool";
 import Controller from '../../request/controller';
 import VisibilitySensor from 'react-visibility-sensor';
@@ -21,9 +22,17 @@ class Review extends Component{
     constructor(props){
         super(props);
         this.state={
-            currentKey:null,
             data:null,
-            total:0
+            total:0,
+            modalShow:false,
+            deleteModalShow:false,
+            rNickname:"空",
+            reviewReply:{
+                content:"",
+                user:{
+                    nickname: ""
+                }
+            }
         }
     }
 
@@ -44,29 +53,34 @@ class Review extends Component{
             "article":this.props.article?{"id":this.props.article}:null
         };
         this.reviewRequest.post(data).then(res=>{
-            if(res.errcode<500){
+            if(res.errcode<400){
                 this.dataRequest.getAll({"articleId":this.props.article}).then(res1=>{
-                    if(res1.errcode<500){
+                    if(res1.errcode<400){
                         document.getElementById("review-content").value = "";
                         this.setState({
-                            data:res1.data
+                            data:res1.data,
+                            total:res1.data.length
                         })
+                    }else {
+                        alert(res1.errmsg);
                     }
+                    button.disabled=false;
                 })
             }else {
                 alert(res.errmsg);
+                button.disabled=false;
             }
-            button.disabled=false;
         })
     };
 
     loadReview = ()=>{
         this.dataRequest.getAll({"articleId":this.props.article}).then(res=>{
-            if(res.errcode<500){
+            if(res.errcode<400){
                 this.setState({
                     data:res.data,
                     total:res.data.length,
-                    currentKey:null
+                    modalShow:false,
+                    deleteModalShow:false
                 })
             }else {
                 alert(res.errmsg);
@@ -74,14 +88,14 @@ class Review extends Component{
         })
     };
 
-    submitReply = (e,reviewId,rUserId)=>{
+    submitReply = (e)=>{
         e.preventDefault();
         let button = e.currentTarget.button;
         button.disabled=true;
-        let content = document.getElementById("review-reply-"+this.state.currentKey).value;
+        let content = e.currentTarget.textarea.value;
         let user={"id":getCookies().id};
-        let rUser={"id":rUserId};
-        let review={"id":reviewId};
+        let rUser={"id":this.state.reviewReply.user.id};
+        let review={"id":this.state.reviewId};
         let data={
             "user":user,
             "rUser":rUser,
@@ -89,23 +103,69 @@ class Review extends Component{
             "review":review
         };
         this.reviewReplyRequest.post(data).then(res=>{
-            if(res.errcode<500){
-                document.getElementById("review-reply-"+this.state.currentKey).value="";
+            if(res.errcode<400){
                 this.loadReview();
             }else {
                 alert(res.errmsg);
             }
-            button.disabled=false;
+            // button.disabled=false;
         })
     };
 
-    showInput = (key)=>{
+    deleteReview = (e) =>{
+        let button = e.currentTarget;
+        button.disabled=true;
+        let formData = new FormData();
+        formData.append("id",this.state.reviewReply.id);
+        if(this.state.reviewReply.review){
+            this.reviewReplyRequest.delete(formData).then(res=>{
+                if(res.errcode<400){
+                    this.loadReview();
+                }else {
+                    alert(res.errmsg);
+                }
+                // button.disabled=false;
+            })
+        }else {
+            this.reviewRequest.delete(formData).then(res=>{
+                if(res.errcode<400){
+                    this.loadReview();
+                }else {
+                    alert(res.errmsg);
+                }
+                // button.disabled=false;
+            })
+        }
+    };
+
+    handleModalShow = (reviewId,reviewReply)=>{
         const cookies = getCookies();
         if(!(cookies&&cookies.id&&cookies.nickname&&cookies.username)){
             return;
         }
+        if(parseInt(cookies.id) === reviewReply.user.id){
+            this.setState({
+                deleteModalShow:true,
+                reviewReply:reviewReply
+            })
+        }else {
+            this.setState({
+                modalShow:true,
+                reviewId:reviewId,
+                reviewReply:reviewReply
+            });
+        }
+    };
+
+    handleModalClose = ()=>{
         this.setState({
-            currentKey:key
+            modalShow:false
+        })
+    };
+
+    handleDeleteModalClose = ()=>{
+        this.setState({
+            deleteModalShow:false
         })
     };
 
@@ -116,6 +176,36 @@ class Review extends Component{
     };
 
     render() {
+        let replyModal = (
+            <Modal show={this.state.modalShow} onHide={this.handleModalClose} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>回复 {this.state.reviewReply.user.nickname}:</Modal.Title>
+                </Modal.Header>
+                <Form onSubmit={(e)=>this.submitReply(e)}>
+                    <Modal.Body>
+                        <textarea placeholder="点击此处回复" style={textStyle} id="modal-textarea" name="textarea" required={true}/>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.handleModalClose}>取消</Button>
+                        <Button variant="primary" type="submit" name="button">回复</Button>
+                    </Modal.Footer>
+                </Form>
+            </Modal>
+        );
+        let deleteModal = (
+            <Modal show={this.state.deleteModalShow} onHide={this.handleDeleteModalClose} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>删除此条评论？</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {this.state.reviewReply.content}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={this.handleDeleteModalClose}>取消</Button>
+                    <Button variant="danger" name="button" onClick={this.deleteReview}>删除</Button>
+                </Modal.Footer>
+            </Modal>
+        );
         const cookies = getCookies();
         let data = this.state.data;
         let total = this.state.total;
@@ -142,6 +232,8 @@ class Review extends Component{
         }
         return(
             <Card  style={{marginBottom: "3rem"}}>
+                {replyModal}
+                {deleteModal}
                 <Card.Header className="article-header">
                     {commentArea}
                 </Card.Header>
@@ -174,27 +266,19 @@ class Review extends Component{
                                                     <span style={{color:"grey",fontSize:".85rem",display:"inline-block"}}>{review.date}</span>
                                                 </Col>
                                             </Row>
-                                            <div style={{padding:".35rem .1rem .35rem .5rem",margin:".15rem 0",background:"#f9f9f9"}} onClick={()=>this.showInput(key)}>
+                                            <div style={{padding:".35rem .1rem .35rem .5rem",margin:".15rem 0",background:"#f9f9f9"}} onClick={()=>this.handleModalShow(review.id,review)}>
                                                 <span style={{color:"#555",display:"inline-block"}}>
                                                     {review.content}
                                                 </span>
                                             </div>
-                                            <Form onSubmit={(e)=>this.submitReply(e,review.id,review.user.id)} hidden={!(key===this.state.currentKey)}>
-                                                <textarea id={"review-reply-"+key} placeholder={"回复"+review.user.nickname} style={textStyle} required={true}/>
-                                                <Button variant="primary" type="submit" name="button">回复</Button>
-                                            </Form>
                                             {
                                                 review.reviewReplyList&&review.reviewReplyList.length!==0?
                                                 review.reviewReplyList.map((reviewReply,key1)=>(
                                                     <div key={key1}>
-                                                        <div  style={{background:"#f9f9f9",padding:".15rem .1rem .15rem .5rem"}} onClick={()=>this.showInput(key+"-"+key1)}>
+                                                        <div  style={{background:"#f9f9f9",padding:".15rem .1rem .15rem .5rem"}} onClick={()=>this.handleModalShow(review.id,reviewReply)}>
                                                             <span>{reviewReply.user.nickname}</span><strong style={{color:"#36648B"}}>@</strong><span>{reviewReply.rUser.nickname}：</span>
                                                             <span style={{color:"#555",background:"#f9f9f9"}}>{reviewReply.content}</span>
                                                         </div>
-                                                        <Form onSubmit={(e)=>this.submitReply(e,review.id,reviewReply.user.id)} hidden={!((key+"-"+key1)===this.state.currentKey)}>
-                                                            <textarea id={"review-reply-"+key+"-"+key1} placeholder={"回复"+reviewReply.user.nickname} style={textStyle} required={true}/>
-                                                            <Button variant="primary" type="submit" name="button">回复</Button>
-                                                        </Form>
                                                     </div>
                                                 ))
                                                     :

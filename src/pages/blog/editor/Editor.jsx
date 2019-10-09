@@ -115,7 +115,7 @@ class Editor extends Component{
         if(submitJson["id"]){
             this.articleRequest.putJson(submitJson).then(res=>{
                 alert(res.errmsg);
-                if(res.errcode<500){
+                if(res.errcode<400){
                     this.props.history.goBack();
                 }else {
                     button.disabled=false;
@@ -124,7 +124,7 @@ class Editor extends Component{
         }else {
             this.articleRequest.post(submitJson).then(res=>{
                 alert(res.errmsg);
-                if(res.errcode<500){
+                if(res.errcode<400){
                     this.props.history.goBack();
                 }else {
                     button.disabled=false;
